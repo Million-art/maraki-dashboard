@@ -1,0 +1,14 @@
+{
+  "name": "Maraki Educational Management System",
+  "short_name": "Maraki",
+  "description": "A comprehensive educational management system for managing users, quizzes, and materials",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait-primary",
+  "icons": [],
+  "categories": ["education", "productivity"],
+  "lang": "en",
+  "dir": "ltr"
+}
