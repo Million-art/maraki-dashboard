@@ -1,5 +1,5 @@
 import { ApiService, API_ENDPOINTS } from '../config/api';
-import type { User, Quiz, Material, CreateUserForm, UpdateUserForm, CreateQuizForm, UpdateQuizForm, CreateMaterialForm, UpdateMaterialForm } from '../types';
+import type { User, Quiz, Material, CreateUserForm, UpdateUserForm, CreateQuizForm, UpdateQuizForm, CreateMaterialForm, UpdateMaterialForm, TelegramUserAnalytics, TelegramUserSummary } from '../types';
 
 // Auth API
 export const authApi = {
@@ -66,4 +66,10 @@ export const materialsApi = {
 // Health API
 export const healthApi = {
   check: () => ApiService.get<{ status: string; service: string; timestamp: string }>(API_ENDPOINTS.HEALTH),
+};
+
+// Analytics API
+export const analyticsApi = {
+  getTelegramUserAnalytics: () => ApiService.get<TelegramUserAnalytics>(API_ENDPOINTS.ANALYTICS_TELEGRAM_USERS),
+  getTelegramUserSummary: () => ApiService.get<TelegramUserSummary>(API_ENDPOINTS.ANALYTICS_TELEGRAM_USERS_SUMMARY),
 };

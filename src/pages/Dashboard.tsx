@@ -5,6 +5,7 @@ import { fetchUsers } from '../store/slices/usersSlice';
 import { fetchQuizzes } from '../store/slices/quizzesSlice';
 import { fetchMaterials } from '../store/slices/materialsSlice';
 import { DashboardSkeleton } from '../components/ui/Skeleton';
+import TelegramAnalytics from '../components/analytics/TelegramAnalytics';
 
 const Dashboard: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -252,6 +253,13 @@ const Dashboard: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {/* Telegram Bot Analytics - Only for admin/superadmin */}
+      {user && (user.role === 'admin' || user.role === 'superadmin') && (
+        <div className="mt-8">
+          <TelegramAnalytics />
+        </div>
+      )}
 
       {/* Data Report Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

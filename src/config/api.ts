@@ -97,6 +97,10 @@ export const API_ENDPOINTS = {
   
   // Health
   HEALTH: '/health',
+  
+  // Analytics
+  ANALYTICS_TELEGRAM_USERS: '/analytics/telegram-users',
+  ANALYTICS_TELEGRAM_USERS_SUMMARY: '/analytics/telegram-users/summary',
 } as const;
 
 // Generic API methods

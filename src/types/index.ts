@@ -192,3 +192,49 @@ export interface ActivityItem {
   timestamp: string;
   user: string;
 }
+
+// Telegram Bot Analytics Types
+export interface TelegramUserAnalytics {
+  totalUsers: number;
+  activeUsers: number;
+  premiumUsers: number;
+  marakiPremiumUsers: number;
+  levelBreakdown: {
+    beginner: number;
+    intermediate: number;
+    advanced: number;
+  };
+  subscriptionBreakdown: {
+    free: number;
+    premium: number;
+    pro: number;
+  };
+  recentUsers: number;
+  averageUsage: {
+    dailyGrammarUsage: number;
+    weeklyLessonUsage: number;
+    dailyChatUsage: number;
+    dailyTranslationUsage: number;
+  };
+  engagement: {
+    totalQuizzesCompleted: number;
+    totalMaterialsAccessed: number;
+    totalTimeSpent: number;
+  };
+}
+
+export interface TelegramUserSummary {
+  totalUsers: number;
+  activeUsers: number;
+  premiumUsers: number;
+  levelBreakdown: {
+    beginner: number;
+    intermediate: number;
+    advanced: number;
+  };
+  subscriptionBreakdown: {
+    free: number;
+    premium: number;
+    pro: number;
+  };
+}
