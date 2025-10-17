@@ -13,25 +13,43 @@ export interface Quiz {
   id: string;
   title: string;
   description?: string;
-  duration: number;
-  totalQuestions: number;
-  passingScore: number;
-  isActive: boolean;
-  questions: Question[];
   category?: string;
   difficulty: 'easy' | 'medium' | 'hard';
+  durationMinutes: number;
+  passingScorePercentage: number;
+  maxAttempts: number;
+  isActive: boolean;
+  isRandomized: boolean;
+  showCorrectAnswers: boolean;
+  showExplanations: boolean;
+  totalQuestions: number;
+  totalPoints: number;
+  questions: Question[];
   createdAt: string;
   updatedAt: string;
 }
 
 export interface Question {
   id: string;
-  question: string;
-  type: 'multiple-choice' | 'true-false' | 'text';
-  options?: string[];
-  correctAnswer: string | boolean;
-  points: number;
+  questionText: string;
   explanation?: string;
+  questionType: 'multiple-choice' | 'true-false';
+  difficulty: 'easy' | 'medium' | 'hard';
+  points: number;
+  orderIndex: number;
+  timeLimitSeconds?: number;
+  options: QuestionOption[];
+  totalAttempts?: number;
+  correctAttempts?: number;
+  successRate?: number;
+}
+
+export interface QuestionOption {
+  id: string;
+  optionText: string;
+  orderIndex: number;
+  isCorrect?: boolean; // Only shown after submission
+  selectionCount?: number; // For analytics
 }
 
 export interface Material {
@@ -46,7 +64,6 @@ export interface Material {
   mimeType?: string;
   category?: string;
   difficulty: 'easy' | 'medium' | 'hard';
-  downloadCount: number;
   viewCount: number;
   createdAt: string;
   updatedAt: string;
@@ -83,23 +100,29 @@ export interface UpdateUserForm {
 export interface CreateQuizForm {
   title: string;
   description?: string;
-  duration: number;
-  totalQuestions: number;
-  passingScore: number;
-  questions: Omit<Question, 'id'>[];
   category?: string;
   difficulty: 'easy' | 'medium' | 'hard';
+  durationMinutes: number;
+  passingScorePercentage: number;
+  maxAttempts?: number;
+  isRandomized?: boolean;
+  showCorrectAnswers?: boolean;
+  showExplanations?: boolean;
+  questions: Omit<Question, 'id'>[];
 }
 
 export interface UpdateQuizForm {
   title?: string;
   description?: string;
-  duration?: number;
-  totalQuestions?: number;
-  passingScore?: number;
-  questions?: Omit<Question, 'id'>[];
   category?: string;
   difficulty?: 'easy' | 'medium' | 'hard';
+  durationMinutes?: number;
+  passingScorePercentage?: number;
+  maxAttempts?: number;
+  isRandomized?: boolean;
+  showCorrectAnswers?: boolean;
+  showExplanations?: boolean;
+  questions?: Omit<Question, 'id'>[];
 }
 
 export interface CreateMaterialForm {

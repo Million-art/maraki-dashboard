@@ -48,9 +48,9 @@ const EditQuizModal: React.FC = () => {
         initialData={{
           title: selectedQuiz.title,
           description: selectedQuiz.description,
-          duration: selectedQuiz.duration,
-          totalQuestions: selectedQuiz.totalQuestions,
-          passingScore: selectedQuiz.passingScore,
+          durationMinutes: selectedQuiz.durationMinutes,
+          maxAttempts: selectedQuiz.maxAttempts,
+          passingScorePercentage: selectedQuiz.passingScorePercentage,
           category: selectedQuiz.category,
           difficulty: selectedQuiz.difficulty,
           questions: selectedQuiz.questions,

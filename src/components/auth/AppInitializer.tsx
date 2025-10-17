@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { validateToken } from '../../store/slices/authSlice';
+import { Loader } from '../ui';
 
 interface AppInitializerProps {
   children: React.ReactNode;
@@ -40,8 +41,8 @@ const AppInitializer: React.FC<AppInitializerProps> = ({ children }) => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Validating session...</p>
+          <Loader size="lg" />
+          <p className="text-gray-600">Checking session...</p>
           <p className="text-sm text-gray-500 mt-2">Maximum 8 seconds</p>
         </div>
       </div>

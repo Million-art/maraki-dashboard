@@ -104,13 +104,7 @@ const Materials: React.FC = () => {
         <span className="text-sm text-gray-900">{value ? formatFileSize(value) : '-'}</span>
       ),
     },
-    {
-      key: 'downloadCount',
-      title: 'Downloads',
-      render: (value: number) => (
-        <span className="text-sm text-gray-900">{value}</span>
-      ),
-    },
+
     {
       key: 'createdAt',
       title: 'Created',

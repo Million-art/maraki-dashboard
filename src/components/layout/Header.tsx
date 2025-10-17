@@ -15,7 +15,7 @@ const Header: React.FC = () => {
     try {
       await dispatch(logout()).unwrap();
     } catch (error) {
-      // Logout failed - user will be redirected anyway
+       
     }
   };
 

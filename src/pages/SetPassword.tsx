@@ -8,6 +8,7 @@ import { getErrorMessage } from '../lib/utils';
 import { ApiService, API_ENDPOINTS } from '../config/api';
 import { passwordSchema } from '../lib/validations';
 import PasswordInput from '../components/ui/PasswordInput';
+import { Loader } from '../components/ui';
 
 const setPasswordSchema = z.object({
   password: passwordSchema,
@@ -207,7 +208,7 @@ const SetPassword: React.FC = () => {
           >
             {isLoading ? (
               <div className="flex items-center justify-center">
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                <Loader size="sm" className="mr-2" />
                 Setting Password...
               </div>
             ) : (

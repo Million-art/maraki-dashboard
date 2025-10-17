@@ -34,18 +34,38 @@ const QuizForm: React.FC<QuizFormProps> = ({
     resolver: zodResolver(schema),
     defaultValues: {
       ...initialData,
-      // Ensure questions have IDs for existing quizzes
-      questions: initialData?.questions?.map((q, index) => ({
-        ...q,
-        id: q.id || `temp-${index}-${Date.now()}`,
+      // Remove IDs from questions for new quizzes - backend will generate them
+      questions: initialData?.questions?.map((q) => ({
+        questionText: q.questionText,
+        questionType: q.questionType,
+        difficulty: q.difficulty,
+        points: q.points,
+        orderIndex: q.orderIndex,
+        explanation: q.explanation,
+        options: q.options?.map((opt) => ({
+          optionText: opt.optionText,
+          orderIndex: opt.orderIndex,
+          isCorrect: opt.isCorrect
+        })) || []
       })) || [{ 
-        id: `temp-${Date.now()}-${Math.random()}`,
-        question: '', 
-        type: 'multiple-choice', 
-        options: [''], 
-        correctAnswer: '', 
-        points: 1, 
-        explanation: '' 
+        questionText: '', 
+        questionType: 'multiple-choice' as const, 
+        difficulty: 'easy' as const,
+        points: 1,
+        orderIndex: 0,
+        explanation: '',
+        options: [
+          {
+            optionText: '',
+            orderIndex: 0,
+            isCorrect: false
+          },
+          {
+            optionText: '',
+            orderIndex: 1,
+            isCorrect: false
+          }
+        ]
       }],
     },
   });
@@ -59,28 +79,69 @@ const QuizForm: React.FC<QuizFormProps> = ({
 
   const addQuestion = () => {
     append({
-      id: `temp-${Date.now()}-${Math.random()}`,
-      question: '',
-      type: 'multiple-choice',
-      options: [''],
-      correctAnswer: '',
+      questionText: '',
+      questionType: 'multiple-choice' as const,
+      difficulty: 'easy' as const,
       points: 1,
+      orderIndex: fields.length,
       explanation: '',
+      options: [
+        {
+          optionText: '',
+          orderIndex: 0,
+          isCorrect: false
+        },
+        {
+          optionText: '',
+          orderIndex: 1,
+          isCorrect: false
+        }
+      ]
     });
   };
 
+  const handleQuestionTypeChange = (questionIndex: number, newType: 'multiple-choice' | 'true-false') => {
+    let newOptions: any[] = [];
+    
+    switch (newType) {
+      case 'multiple-choice':
+        newOptions = [
+          { optionText: '', orderIndex: 0, isCorrect: false },
+          { optionText: '', orderIndex: 1, isCorrect: false }
+        ];
+        break;
+      case 'true-false':
+        newOptions = [
+          { optionText: 'True', orderIndex: 0, isCorrect: false },
+          { optionText: 'False', orderIndex: 1, isCorrect: false }
+        ];
+        break;
+    }
+    
+    setValue(`questions.${questionIndex}.questionType`, newType);
+    setValue(`questions.${questionIndex}.options`, newOptions);
+  };
+
   const addOption = (questionIndex: number) => {
-    const currentOptions = watchedQuestions?.[questionIndex]?.options || [''];
-    const newOptions = [...currentOptions, ''];
-    // Update the options for this specific question using setValue
+    const currentOptions = watchedQuestions?.[questionIndex]?.options || [];
+    const newOptions = [...currentOptions, {
+      optionText: '',
+      orderIndex: currentOptions.length,
+      isCorrect: false
+    }];
     setValue(`questions.${questionIndex}.options`, newOptions);
   };
 
   const removeOption = (questionIndex: number, optionIndex: number) => {
-    const currentOptions = watchedQuestions?.[questionIndex]?.options || [''];
+    const currentOptions = watchedQuestions?.[questionIndex]?.options || [];
     if (currentOptions.length > 1) {
       const newOptions = currentOptions.filter((_, index) => index !== optionIndex);
-      setValue(`questions.${questionIndex}.options`, newOptions);
+      // Update orderIndex for remaining options
+      const updatedOptions = newOptions.map((option, index) => ({
+        ...option,
+        orderIndex: index
+      }));
+      setValue(`questions.${questionIndex}.options`, updatedOptions);
     }
   };
 
@@ -128,24 +189,24 @@ const QuizForm: React.FC<QuizFormProps> = ({
           <Input
             label="Duration (minutes)"
             type="number"
-            {...register('duration', { valueAsNumber: true })}
-            error={errors.duration?.message}
+            {...register('durationMinutes', { valueAsNumber: true })}
+            error={errors.durationMinutes?.message}
             placeholder="30"
           />
           
           <Input
             label="Total Questions"
             type="number"
-            {...register('totalQuestions', { valueAsNumber: true })}
-            error={errors.totalQuestions?.message}
+            {...register('maxAttempts', { valueAsNumber: true })}
+            error={errors.maxAttempts?.message}
             placeholder="10"
           />
           
           <Input
             label="Passing Score (%)"
             type="number"
-            {...register('passingScore', { valueAsNumber: true })}
-            error={errors.passingScore?.message}
+            {...register('passingScorePercentage', { valueAsNumber: true })}
+            error={errors.passingScorePercentage?.message}
             placeholder="70"
           />
         </div>
@@ -173,8 +234,8 @@ const QuizForm: React.FC<QuizFormProps> = ({
           </Button>
         </div>
 
-        {fields.map((field, questionIndex) => (
-          <div key={field.id} className="border border-gray-200 rounded-lg p-4 space-y-4">
+        {fields.map((_, questionIndex) => (
+          <div key={questionIndex} className="border border-gray-200 rounded-lg p-4 space-y-4">
             <div className="flex justify-between items-center">
               <h4 className="font-medium text-gray-900">Question {questionIndex + 1}</h4>
               {fields.length > 1 && (
@@ -191,15 +252,11 @@ const QuizForm: React.FC<QuizFormProps> = ({
             </div>
             
             {/* Hidden input for question ID */}
-            <input
-              type="hidden"
-              {...register(`questions.${questionIndex}.id`)}
-            />
 
             <Input
               label="Question Text"
-              {...register(`questions.${questionIndex}.question`)}
-              error={errors.questions?.[questionIndex]?.question?.message}
+              {...register(`questions.${questionIndex}.questionText`)}
+              error={errors.questions?.[questionIndex]?.questionText?.message}
               placeholder="Enter your question"
             />
 
@@ -209,12 +266,12 @@ const QuizForm: React.FC<QuizFormProps> = ({
                   Question Type
                 </label>
                 <select
-                  {...register(`questions.${questionIndex}.type`)}
+                  value={watchedQuestions?.[questionIndex]?.questionType || 'multiple-choice'}
+                  onChange={(e) => handleQuestionTypeChange(questionIndex, e.target.value as 'multiple-choice' | 'true-false')}
                   className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                 >
                   <option value="multiple-choice">Multiple Choice</option>
                   <option value="true-false">True/False</option>
-                  <option value="text">Text Input</option>
                 </select>
               </div>
 
@@ -228,25 +285,47 @@ const QuizForm: React.FC<QuizFormProps> = ({
             </div>
 
             {/* Options for multiple choice questions */}
-            {watchedQuestions?.[questionIndex]?.type === 'multiple-choice' && (
+            {watchedQuestions?.[questionIndex]?.questionType === 'multiple-choice' && (
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">Options</label>
-                {watchedQuestions?.[questionIndex]?.options?.map((_, optionIndex) => (
+                {watchedQuestions?.[questionIndex]?.options?.map((option, optionIndex) => (
                   <div key={optionIndex} className="flex items-center space-x-2">
                     <Input
-                      {...register(`questions.${questionIndex}.options.${optionIndex}`)}
+                      {...register(`questions.${questionIndex}.options.${optionIndex}.optionText`)}
                       placeholder={`Option ${optionIndex + 1}`}
                       className="flex-1"
                     />
-                    {(watchedQuestions?.[questionIndex]?.options?.length || 0) > 1 && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeOption(questionIndex, optionIndex)}
-                        icon={<X className="h-4 w-4" />}
-                      />
-                    )}
+                    <div className="flex items-center space-x-2">
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name={`question-${questionIndex}-correct`}
+                          checked={option.isCorrect || false}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              // Set all options to false first
+                              const currentOptions = watchedQuestions?.[questionIndex]?.options || [];
+                              const updatedOptions = currentOptions.map((opt, idx) => ({
+                                ...opt,
+                                isCorrect: idx === optionIndex
+                              }));
+                              setValue(`questions.${questionIndex}.options`, updatedOptions);
+                            }
+                          }}
+                          className="mr-1"
+                        />
+                        <span className="text-sm">Correct</span>
+                      </label>
+                      {(watchedQuestions?.[questionIndex]?.options?.length || 0) > 1 && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeOption(questionIndex, optionIndex)}
+                          icon={<X className="h-4 w-4" />}
+                        />
+                      )}
+                    </div>
                   </div>
                 ))}
                 <Button
@@ -261,12 +340,49 @@ const QuizForm: React.FC<QuizFormProps> = ({
               </div>
             )}
 
-            <Input
-              label="Correct Answer"
-              {...register(`questions.${questionIndex}.correctAnswer`)}
-              error={errors.questions?.[questionIndex]?.correctAnswer?.message}
-              placeholder="Enter correct answer"
-            />
+            {/* True/False Question */}
+            {watchedQuestions?.[questionIndex]?.questionType === 'true-false' && (
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">Correct Answer</label>
+                <div className="flex space-x-4">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name={`question-${questionIndex}-true-false`}
+                      checked={watchedQuestions?.[questionIndex]?.options?.[0]?.isCorrect === true}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setValue(`questions.${questionIndex}.options`, [
+                            { optionText: 'True', orderIndex: 0, isCorrect: true },
+                            { optionText: 'False', orderIndex: 1, isCorrect: false }
+                          ]);
+                        }
+                      }}
+                      className="mr-2"
+                    />
+                    <span className="text-sm font-medium">True</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name={`question-${questionIndex}-true-false`}
+                      checked={watchedQuestions?.[questionIndex]?.options?.[1]?.isCorrect === true}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setValue(`questions.${questionIndex}.options`, [
+                            { optionText: 'True', orderIndex: 0, isCorrect: false },
+                            { optionText: 'False', orderIndex: 1, isCorrect: true }
+                          ]);
+                        }
+                      }}
+                      className="mr-2"
+                    />
+                    <span className="text-sm font-medium">False</span>
+                  </label>
+                </div>
+              </div>
+            )}
+
 
             <Input
               label="Explanation (optional)"

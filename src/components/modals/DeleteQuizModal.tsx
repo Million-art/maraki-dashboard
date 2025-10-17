@@ -65,7 +65,7 @@ const DeleteQuizModal: React.FC = () => {
           <p className="text-sm text-gray-600">Title: {selectedQuiz.title}</p>
           <p className="text-sm text-gray-600">Difficulty: {selectedQuiz.difficulty}</p>
           <p className="text-sm text-gray-600">Questions: {selectedQuiz.totalQuestions}</p>
-          <p className="text-sm text-gray-600">Duration: {selectedQuiz.duration} minutes</p>
+          <p className="text-sm text-gray-600">Duration: {selectedQuiz.durationMinutes} minutes</p>
         </div>
 
         <div className="flex justify-end space-x-3 pt-4">
