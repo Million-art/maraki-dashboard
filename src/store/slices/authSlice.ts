@@ -80,7 +80,7 @@ export const login = createAsyncThunk(
       const response = await authApi.login(credentials);
       return { user: response.user, token: response.access_token };
     } catch (error: any) {
-      return rejectWithValue(error);
+      return rejectWithValue(error?.message || error?.response?.data?.message || 'Login failed');
     }
   }
 );
@@ -91,13 +91,13 @@ export const logout = createAsyncThunk(
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       // Clear local storage
       localStorage.removeItem('authToken');
-      
+
       return true;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Logout failed');
+      return rejectWithValue(error?.message || 'Logout failed');
     }
   }
 );
@@ -135,7 +135,7 @@ export const refreshToken = createAsyncThunk(
       const response = await authApi.refreshToken();
       return response.access_token;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Token refresh failed');
+      return rejectWithValue(error?.message || error?.response?.data?.message || 'Token refresh failed');
     }
   }
 );
@@ -147,7 +147,7 @@ export const forgotPassword = createAsyncThunk(
       const response = await authApi.forgotPassword(email);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || error.message || 'Failed to send reset email');
+      return rejectWithValue(error?.message || error?.response?.data?.message || 'Failed to send reset email');
     }
   }
 );
@@ -159,7 +159,7 @@ export const resetPassword = createAsyncThunk(
       const response = await authApi.resetPassword(token, password);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || error.message || 'Failed to reset password');
+      return rejectWithValue(error?.message || error?.response?.data?.message || 'Failed to reset password');
     }
   }
 );
@@ -203,7 +203,7 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload as string;
+        state.error = typeof action.payload === 'string' ? action.payload : (action.payload as Error)?.message || 'Login failed';
         state.isAuthenticated = false;
       })
       
@@ -224,7 +224,7 @@ const authSlice = createSlice({
       })
       .addCase(logout.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload as string;
+        state.error = typeof action.payload === 'string' ? action.payload : (action.payload as Error)?.message || 'Logout failed';
       })
       
       // Refresh token
@@ -238,7 +238,7 @@ const authSlice = createSlice({
       })
       .addCase(refreshToken.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload as string;
+        state.error = typeof action.payload === 'string' ? action.payload : (action.payload as Error)?.message || 'Token refresh failed';
         state.isAuthenticated = false;
         state.user = null;
         state.token = null;
@@ -261,11 +261,11 @@ const authSlice = createSlice({
       })
       .addCase(validateToken.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload as string;
+        state.error = typeof action.payload === 'string' ? action.payload : (action.payload as Error)?.message || 'Token validation failed';
         state.isAuthenticated = false;
         state.user = null;
         state.token = null;
-        
+
         // Clear all auth data from localStorage
         localStorage.removeItem('authToken');
         localStorage.removeItem('authUser');
@@ -282,7 +282,7 @@ const authSlice = createSlice({
       })
       .addCase(forgotPassword.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload as string;
+        state.error = typeof action.payload === 'string' ? action.payload : (action.payload as Error)?.message || 'Failed to send reset email';
       })
       
       // Reset password
@@ -296,7 +296,7 @@ const authSlice = createSlice({
       })
       .addCase(resetPassword.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload as string;
+        state.error = typeof action.payload === 'string' ? action.payload : (action.payload as Error)?.message || 'Failed to reset password';
       });
   },
 });
