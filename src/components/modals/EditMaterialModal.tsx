@@ -49,14 +49,14 @@ const EditMaterialModal: React.FC = () => {
         initialData={{
           title: selectedMaterial.title,
           description: selectedMaterial.description,
-          type: selectedMaterial.type,
+          type: selectedMaterial.type as any,
           url: selectedMaterial.url,
           filePath: selectedMaterial.filePath,
           fileName: selectedMaterial.fileName,
           fileSize: selectedMaterial.fileSize,
           mimeType: selectedMaterial.mimeType,
           category: selectedMaterial.category,
-          difficulty: selectedMaterial.difficulty,
+          difficulty: selectedMaterial.difficulty as any,
         }}
         onSubmit={handleSubmit}
         onCancel={handleCancel}

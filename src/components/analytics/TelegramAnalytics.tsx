@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Users, Crown, TrendingUp, Activity, BookOpen, Clock, MessageSquare, Globe } from 'lucide-react';
+import { Users, TrendingUp, Activity, Globe } from 'lucide-react';
 import { analyticsApi } from '../../services/api';
 import type { TelegramUserAnalytics } from '../../types';
 import { cn } from '../../lib/utils';
@@ -115,9 +115,6 @@ const TelegramAnalytics: React.FC<TelegramAnalyticsProps> = ({ className }) => {
   const talkData = (analytics as any).talkWithMaraki || {};
   const dailyData = (analytics as any).dailyChallenge || {};
   const subBreakdown = (analytics.subscriptionBreakdown as any) || {};
-  const freeVal = subBreakdown.free ?? 0;
-  const premiumVal = (subBreakdown.premium ?? 0) + (subBreakdown.monthly ?? 0) + (subBreakdown.daily ?? 0);
-  const proVal = (subBreakdown.pro ?? 0) + (subBreakdown.yearly ?? 0);
 
   return (
     <div className={cn("space-y-6", className)}>
