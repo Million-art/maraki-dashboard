@@ -16,6 +16,7 @@ import AuthGuard from './components/auth/AuthGuard';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Notification from './components/ui/Notification';
 import ErrorBoundary from './components/ErrorBoundary';
+import Students from './pages/Students';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
                 </ErrorBoundary>
               }>
                 <Route index element={<ErrorBoundary><ProtectedRoute><Dashboard /></ProtectedRoute></ErrorBoundary>} />
+                <Route path="students" element={<ErrorBoundary><ProtectedRoute requiredRole="admin"><Students /></ProtectedRoute></ErrorBoundary>} />
                 <Route path="users" element={<ErrorBoundary><ProtectedRoute requiredRole="admin"><Users /></ProtectedRoute></ErrorBoundary>} />
                 <Route path="quizzes" element={<ErrorBoundary><ProtectedRoute><Quizzes /></ProtectedRoute></ErrorBoundary>} />
                 <Route path="materials" element={<ErrorBoundary><ProtectedRoute><Materials /></ProtectedRoute></ErrorBoundary>} />

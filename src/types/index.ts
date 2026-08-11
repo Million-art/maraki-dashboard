@@ -56,15 +56,16 @@ export interface Material {
   id: string;
   title: string;
   description?: string;
-  type: 'pdf' | 'video' | 'image' | 'document' | 'link' | 'presentation';
+  type: 'pdf' | 'video' | 'image' | 'document' | 'link' | 'presentation' | string;
   url?: string;
   filePath?: string;
   fileName?: string;
   fileSize?: number;
   mimeType?: string;
   category?: string;
-  difficulty: 'easy' | 'medium' | 'hard';
+  difficulty?: 'easy' | 'medium' | 'hard' | string;
   viewCount: number;
+  isActive?: boolean;
   createdAt: string;
   updatedAt: string;
 }

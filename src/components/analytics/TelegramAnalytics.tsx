@@ -112,152 +112,169 @@ const TelegramAnalytics: React.FC<TelegramAnalyticsProps> = ({ className }) => {
     );
   };
 
+  const talkData = (analytics as any).talkWithMaraki || {};
+  const dailyData = (analytics as any).dailyChallenge || {};
+  const subBreakdown = (analytics.subscriptionBreakdown as any) || {};
+  const freeVal = subBreakdown.free ?? 0;
+  const premiumVal = (subBreakdown.premium ?? 0) + (subBreakdown.monthly ?? 0) + (subBreakdown.daily ?? 0);
+  const proVal = (subBreakdown.pro ?? 0) + (subBreakdown.yearly ?? 0);
+
   return (
     <div className={cn("space-y-6", className)}>
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900">Telegram Bot Analytics</h2>
-        <p className="text-gray-600">Real-time insights about your Telegram bot users</p>
+        <h2 className="text-2xl font-bold text-gray-900">Telegram Bot & Mini App Analytics</h2>
+        <p className="text-gray-600">Real-time performance insights for Talk with Maraki (Voice), Daily Challenges, and Notifications</p>
       </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          title="Total Users"
-          value={analytics.totalUsers}
+          title="Total Students"
+          value={analytics.totalUsers ?? 0}
           icon={Users}
           color="blue"
         />
         <StatCard
-          title="Active Users"
-          value={analytics.activeUsers}
+          title="Daily Notification Users"
+          value={dailyData.subscribedNotificationUsers ?? analytics.totalUsers ?? 0}
           icon={Activity}
           color="green"
         />
         <StatCard
-          title="Premium Users"
-          value={analytics.premiumUsers}
-          icon={Crown}
+          title="Talk with Maraki (Voice)"
+          value={talkData.totalSessions ?? 0}
+          icon={Globe}
           color="purple"
         />
         <StatCard
-          title="Recent Users (30d)"
-          value={analytics.recentUsers}
+          title="Daily Challenge Participants"
+          value={dailyData.todayAttempts ?? 0}
           icon={TrendingUp}
           color="orange"
         />
       </div>
 
-      {/* Level Breakdown */}
-      <div className="bg-white rounded-lg border p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">User Level Distribution</h3>
-        <div className="space-y-4">
-          <ProgressBar
-            label="Beginner"
-            value={analytics.levelBreakdown.beginner}
-            total={analytics.totalUsers}
-            color="blue"
-          />
-          <ProgressBar
-            label="Intermediate"
-            value={analytics.levelBreakdown.intermediate}
-            total={analytics.totalUsers}
-            color="green"
-          />
-          <ProgressBar
-            label="Advanced"
-            value={analytics.levelBreakdown.advanced}
-            total={analytics.totalUsers}
-            color="purple"
-          />
+      {/* Talk with Maraki (Voice) Section */}
+      <div className="bg-white rounded-xl border border-indigo-100 p-6 shadow-sm">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-lg">
+            <Globe className="h-6 w-6" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-gray-900">🎙️ Talk with Maraki (Voice AI Analytics)</h3>
+            <p className="text-xs text-gray-500">Real-time Gemini voice conversation metrics from the Mini App</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="p-4 bg-indigo-50/50 rounded-lg border border-indigo-100">
+            <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Total Voice Calls</p>
+            <p className="text-2xl font-bold text-indigo-900 mt-1">{(talkData.totalSessions ?? 0).toLocaleString()}</p>
+            <p className="text-xs text-indigo-500 mt-1">+{talkData.todaySessions ?? 0} today</p>
+          </div>
+          <div className="p-4 bg-purple-50/50 rounded-lg border border-purple-100">
+            <p className="text-xs font-semibold text-purple-600 uppercase tracking-wider">Total Talk Duration</p>
+            <p className="text-2xl font-bold text-purple-900 mt-1">{(talkData.totalMinutes ?? 0).toLocaleString()} mins</p>
+            <p className="text-xs text-purple-500 mt-1">{talkData.totalSeconds ?? 0} seconds total</p>
+          </div>
+          <div className="p-4 bg-emerald-50/50 rounded-lg border border-emerald-100">
+            <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Voice Users</p>
+            <p className="text-2xl font-bold text-emerald-900 mt-1">{(talkData.activeVoiceUsers ?? 0).toLocaleString()}</p>
+            <p className="text-xs text-emerald-500 mt-1">Students using Voice AI</p>
+          </div>
+          <div className="p-4 bg-amber-50/50 rounded-lg border border-amber-100">
+            <p className="text-xs font-semibold text-amber-600 uppercase tracking-wider">Avg Session Duration</p>
+            <p className="text-2xl font-bold text-amber-900 mt-1">{talkData.avgSessionDurationSeconds ?? 0} sec</p>
+            <p className="text-xs text-amber-500 mt-1">per voice session</p>
+          </div>
         </div>
       </div>
 
-      {/* Subscription Breakdown */}
-      <div className="bg-white rounded-lg border p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Subscription Distribution</h3>
-        <div className="space-y-4">
-          <ProgressBar
-            label="Free"
-            value={analytics.subscriptionBreakdown.free}
-            total={analytics.totalUsers}
-            color="blue"
-          />
-          <ProgressBar
-            label="Premium"
-            value={analytics.subscriptionBreakdown.premium}
-            total={analytics.totalUsers}
-            color="green"
-          />
-          <ProgressBar
-            label="Pro"
-            value={analytics.subscriptionBreakdown.pro}
-            total={analytics.totalUsers}
-            color="purple"
-          />
+      {/* Daily Challenge & Notifications Section */}
+      <div className="bg-white rounded-xl border border-emerald-100 p-6 shadow-sm">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-lg">
+            <TrendingUp className="h-6 w-6" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-gray-900">🔔 Daily Challenge & Notification Analytics</h3>
+            <p className="text-xs text-gray-500">Student engagement with automated daily notifications and challenge quizzes</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="p-4 bg-emerald-50/50 rounded-lg border border-emerald-100">
+            <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Users Receiving Daily Notifications</p>
+            <p className="text-2xl font-bold text-emerald-900 mt-1">{(dailyData.subscribedNotificationUsers ?? analytics.totalUsers ?? 0).toLocaleString()}</p>
+            <p className="text-xs text-emerald-600 mt-1">100% active Telegram subscribers</p>
+          </div>
+          <div className="p-4 bg-blue-50/50 rounded-lg border border-blue-100">
+            <p className="text-xs font-semibold text-blue-600 uppercase tracking-wider">Today's Daily Challenge Solvers</p>
+            <p className="text-2xl font-bold text-blue-900 mt-1">{(dailyData.todayAttempts ?? 0).toLocaleString()}</p>
+            <p className="text-xs text-blue-500 mt-1">Completed today's challenge</p>
+          </div>
+          <div className="p-4 bg-indigo-50/50 rounded-lg border border-indigo-100">
+            <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Total Challenge Attempts</p>
+            <p className="text-2xl font-bold text-indigo-900 mt-1">{(dailyData.totalAttempts ?? 0).toLocaleString()}</p>
+            <p className="text-xs text-indigo-500 mt-1">All time attempts</p>
+          </div>
         </div>
       </div>
 
-      {/* Usage Analytics */}
+      {/* Level Breakdown & Subscription Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Average Daily Usage</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">User Level Distribution</h3>
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <MessageSquare className="h-4 w-4 text-blue-500" />
-                <span className="text-sm font-medium">Grammar</span>
-              </div>
-              <span className="text-sm text-gray-600">{analytics.averageUsage.dailyGrammarUsage}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <BookOpen className="h-4 w-4 text-green-500" />
-                <span className="text-sm font-medium">Lessons</span>
-              </div>
-              <span className="text-sm text-gray-600">{analytics.averageUsage.weeklyLessonUsage}/week</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Globe className="h-4 w-4 text-purple-500" />
-                <span className="text-sm font-medium">Chat</span>
-              </div>
-              <span className="text-sm text-gray-600">{analytics.averageUsage.dailyChatUsage}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <TrendingUp className="h-4 w-4 text-orange-500" />
-                <span className="text-sm font-medium">Translation</span>
-              </div>
-              <span className="text-sm text-gray-600">{analytics.averageUsage.dailyTranslationUsage}</span>
-            </div>
+            <ProgressBar
+              label="Beginner"
+              value={analytics.levelBreakdown?.beginner ?? 0}
+              total={analytics.totalUsers ?? 0}
+              color="blue"
+            />
+            <ProgressBar
+              label="Intermediate"
+              value={analytics.levelBreakdown?.intermediate ?? 0}
+              total={analytics.totalUsers ?? 0}
+              color="green"
+            />
+            <ProgressBar
+              label="Advanced"
+              value={analytics.levelBreakdown?.advanced ?? 0}
+              total={analytics.totalUsers ?? 0}
+              color="purple"
+            />
           </div>
         </div>
 
         <div className="bg-white rounded-lg border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Engagement Metrics</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Subscription Tier Breakdown</h3>
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <BookOpen className="h-4 w-4 text-blue-500" />
-                <span className="text-sm font-medium">Quizzes Completed</span>
-              </div>
-              <span className="text-sm text-gray-600">{analytics.engagement.totalQuizzesCompleted.toLocaleString()}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Users className="h-4 w-4 text-green-500" />
-                <span className="text-sm font-medium">Materials Accessed</span>
-              </div>
-              <span className="text-sm text-gray-600">{analytics.engagement.totalMaterialsAccessed.toLocaleString()}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Clock className="h-4 w-4 text-purple-500" />
-                <span className="text-sm font-medium">Total Time Spent</span>
-              </div>
-              <span className="text-sm text-gray-600">{Math.round(analytics.engagement.totalTimeSpent / 60)}h</span>
-            </div>
+            <ProgressBar
+              label="Free Tier"
+              value={subBreakdown.free ?? 0}
+              total={analytics.totalUsers ?? 0}
+              color="blue"
+            />
+            <ProgressBar
+              label="1 Month Subscription"
+              value={subBreakdown.monthly ?? 0}
+              total={analytics.totalUsers ?? 0}
+              color="green"
+            />
+            <ProgressBar
+              label="3 Months Subscription"
+              value={subBreakdown.daily ?? 0}
+              total={analytics.totalUsers ?? 0}
+              color="purple"
+            />
+            <ProgressBar
+              label="1 Year Subscription"
+              value={subBreakdown.yearly ?? 0}
+              total={analytics.totalUsers ?? 0}
+              color="orange"
+            />
           </div>
         </div>
       </div>

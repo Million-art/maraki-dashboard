@@ -5,6 +5,7 @@ import quizzesReducer from './slices/quizzesSlice';
 import materialsReducer from './slices/materialsSlice';
 import uiReducer from './slices/uiSlice';
 import authReducer from './slices/authSlice';
+import studentsReducer from './slices/studentsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     users: usersReducer,
     quizzes: quizzesReducer,
     materials: materialsReducer,
+    students: studentsReducer,
     ui: uiReducer,
   },
   middleware: (getDefaultMiddleware) =>

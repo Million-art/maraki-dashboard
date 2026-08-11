@@ -101,6 +101,12 @@ export const API_ENDPOINTS = {
   // Analytics
   ANALYTICS_TELEGRAM_USERS: '/analytics/telegram-users',
   ANALYTICS_TELEGRAM_USERS_SUMMARY: '/analytics/telegram-users/summary',
+
+  // Students (admin)
+  ADMIN_STUDENTS: '/api/admin/students',
+  ADMIN_STUDENTS_ANALYTICS: '/api/admin/students/analytics',
+  ADMIN_STUDENT_BY_TELEGRAM_ID: (telegramId: string) => `/api/admin/students/${telegramId}`,
+  ADMIN_STUDENT_UPDATE_SUBSCRIPTION: (telegramId: string) => `/api/admin/students/${telegramId}/subscription`,
 } as const;
 
 // Generic API methods

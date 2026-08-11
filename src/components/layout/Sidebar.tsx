@@ -14,7 +14,8 @@ import { toggleSidebar } from '../../store/slices/uiSlice';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: BarChart3, roles: ['admin', 'moderator', 'superadmin'] },
-  { name: 'Users', href: '/users', icon: Users, roles: ['admin', 'superadmin'] },
+  { name: 'Students', href: '/students', icon: Users, roles: ['admin', 'superadmin'] },
+  { name: 'Admin Users', href: '/users', icon: Users, roles: ['admin', 'superadmin'] },
   { name: 'Quizzes', href: '/quizzes', icon: BookOpen, roles: ['admin', 'moderator', 'superadmin'] },
   { name: 'Materials', href: '/materials', icon: FileText, roles: ['admin', 'moderator', 'superadmin'] },
   { name: 'Settings', href: '/settings', icon: Settings, roles: ['admin', 'moderator', 'superadmin'] },

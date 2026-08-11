@@ -68,8 +68,74 @@ export const healthApi = {
   check: () => ApiService.get<{ status: string; service: string; timestamp: string }>(API_ENDPOINTS.HEALTH),
 };
 
-// Analytics API
+// Analytics API — now powered by the real student analytics endpoint
 export const analyticsApi = {
-  getTelegramUserAnalytics: () => ApiService.get<TelegramUserAnalytics>(API_ENDPOINTS.ANALYTICS_TELEGRAM_USERS),
-  getTelegramUserSummary: () => ApiService.get<TelegramUserSummary>(API_ENDPOINTS.ANALYTICS_TELEGRAM_USERS_SUMMARY),
+  getTelegramUserAnalytics: () => ApiService.get<TelegramUserAnalytics>(API_ENDPOINTS.ADMIN_STUDENTS_ANALYTICS),
+  getTelegramUserSummary: () => ApiService.get<TelegramUserSummary>(API_ENDPOINTS.ADMIN_STUDENTS_ANALYTICS),
 };
+
+// Students Admin API
+export interface StudentUser {
+  telegramId: string;
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  level: string;
+  isPremium: boolean;
+  isMarakiPremium: boolean;
+  subscriptionTier: 'FREE' | 'DAILY' | 'MONTHLY' | 'YEARLY';
+  subscriptionExpiresAt?: string;
+  totalQuizzesCompleted: number;
+  totalMaterialsAccessed: number;
+  referredBy?: string;
+  createdAt: string;
+  updatedAt: string;
+  _count?: { quizAttempts: number };
+}
+
+export interface StudentsResponse {
+  data: StudentUser[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface StudentAnalytics {
+  totalUsers: number;
+  activeUsers: number;
+  premiumUsers: number;
+  marakiPremiumUsers: number;
+  recentUsers: number;
+  monthlyNewUsers: number;
+  levelBreakdown: { beginner: number; intermediate: number; advanced: number };
+  subscriptionBreakdown: { free: number; daily: number; monthly: number; yearly: number };
+  engagement: { totalQuizzesCompleted: number; totalMaterialsAccessed: number; totalTimeSpent: number };
+}
+
+export const studentsApi = {
+  getAll: (params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    level?: string;
+    subscription?: string;
+    sort?: string;
+    order?: string;
+  }) => {
+    const query = new URLSearchParams();
+    if (params?.page) query.set('page', String(params.page));
+    if (params?.limit) query.set('limit', String(params.limit));
+    if (params?.search) query.set('search', params.search);
+    if (params?.level) query.set('level', params.level);
+    if (params?.subscription) query.set('subscription', params.subscription);
+    if (params?.sort) query.set('sort', params.sort);
+    if (params?.order) query.set('order', params.order);
+    return ApiService.get<StudentsResponse>(`${API_ENDPOINTS.ADMIN_STUDENTS}?${query.toString()}`);
+  },
+  getAnalytics: () => ApiService.get<StudentAnalytics>(API_ENDPOINTS.ADMIN_STUDENTS_ANALYTICS),
+  getById: (telegramId: string) => ApiService.get<StudentUser>(API_ENDPOINTS.ADMIN_STUDENT_BY_TELEGRAM_ID(telegramId)),
+  updateSubscription: (telegramId: string, tier: string, daysToAdd?: number) =>
+    ApiService.patch<StudentUser>(API_ENDPOINTS.ADMIN_STUDENT_UPDATE_SUBSCRIPTION(telegramId), { tier, daysToAdd }),
+};
+

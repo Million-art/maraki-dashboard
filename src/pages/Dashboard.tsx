@@ -31,6 +31,7 @@ const Dashboard: React.FC = () => {
     const activeQuizzes = quizzes && Array.isArray(quizzes) ? quizzes.filter(quiz => quiz.isActive).length : 0;
     const inactiveQuizzes = totalQuizzes - activeQuizzes;
     const activeUsers = users && Array.isArray(users) ? users.filter(user => user.isActive).length : 0;
+    const activeMaterials = materials && Array.isArray(materials) ? materials.filter(m => m.isActive !== false).length : 0;
     
     return {
       totalUsers,
@@ -38,7 +39,8 @@ const Dashboard: React.FC = () => {
       totalMaterials,
       activeQuizzes,
       inactiveQuizzes,
-      activeUsers
+      activeUsers,
+      activeMaterials,
     };
   }, [users, quizzes, materials]);
   
@@ -346,18 +348,25 @@ const Dashboard: React.FC = () => {
                 ></div>
               </div>
 
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Content Distribution</span>
-                <span className="text-sm font-medium text-gray-900">
-                  {statistics.totalMaterials > 0 && materials && Array.isArray(materials) ? Math.round((materials.filter(m => m.type === 'pdf').length / statistics.totalMaterials) * 100) : 0}% PDFs
-                </span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className="bg-purple-600 h-2 rounded-full" 
-                  style={{ width: `${statistics.totalMaterials > 0 && materials && Array.isArray(materials) ? (materials.filter(m => m.type === 'pdf').length / statistics.totalMaterials) * 100 : 0}%` }}
-                ></div>
-              </div>
+              {(() => {
+                const totalMat = statistics.totalMaterials ?? 0;
+                const activeMat = statistics.activeMaterials ?? totalMat;
+                const pct = totalMat > 0 ? Math.round((activeMat / totalMat) * 100) : 100;
+                return (
+                  <>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Learning Materials Access Rate</span>
+                      <span className="text-sm font-medium text-gray-900">{pct}% Active</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-indigo-600 h-2 rounded-full" 
+                        style={{ width: `${pct}%` }}
+                      ></div>
+                    </div>
+                  </>
+                );
+              })()}
 
               <div className="pt-4 border-t border-gray-200">
                 <div className={`grid gap-4 text-center ${user && (user.role === 'admin' || user.role === 'superadmin') ? 'grid-cols-2' : 'grid-cols-1'}`}>
