@@ -222,6 +222,53 @@ const TelegramAnalytics: React.FC<TelegramAnalyticsProps> = ({ className }) => {
         </div>
       </div>
 
+      {/* Revenue & Retention Metrics */}
+      <div className="bg-white rounded-xl border border-amber-100 p-6 shadow-sm">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2.5 bg-amber-50 text-amber-600 rounded-lg">
+            <Activity className="h-6 w-6" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-gray-900">💵 Financial Revenue & User Retention Analytics</h3>
+            <p className="text-xs text-gray-500">Subscription revenue (ETB), customer lifetime value (LTV), and cohort retention rates</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="p-4 bg-amber-50/50 rounded-lg border border-amber-100">
+            <p className="text-xs font-semibold text-amber-600 uppercase tracking-wider">Total Revenue</p>
+            <p className="text-2xl font-bold text-amber-900 mt-1">
+              {((analytics as any).revenue?.totalETB ?? 0).toLocaleString()} ETB
+            </p>
+            <p className="text-xs text-amber-600 mt-1">{(analytics as any).revenue?.payingUsers ?? 0} paying subscribers</p>
+          </div>
+
+          <div className="p-4 bg-emerald-50/50 rounded-lg border border-emerald-100">
+            <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Average LTV</p>
+            <p className="text-2xl font-bold text-emerald-900 mt-1">
+              {((analytics as any).revenue?.avgLTV ?? 0).toLocaleString()} ETB
+            </p>
+            <p className="text-xs text-emerald-600 mt-1">Lifetime value per student</p>
+          </div>
+
+          <div className="p-4 bg-blue-50/50 rounded-lg border border-blue-100">
+            <p className="text-xs font-semibold text-blue-600 uppercase tracking-wider">7-Day Retention</p>
+            <p className="text-2xl font-bold text-blue-900 mt-1">
+              {(analytics as any).retention?.retention7d ?? 100}%
+            </p>
+            <p className="text-xs text-blue-600 mt-1">Active 7d after sign-up</p>
+          </div>
+
+          <div className="p-4 bg-purple-50/50 rounded-lg border border-purple-100">
+            <p className="text-xs font-semibold text-purple-600 uppercase tracking-wider">30-Day Retention</p>
+            <p className="text-2xl font-bold text-purple-900 mt-1">
+              {(analytics as any).retention?.retention30d ?? 100}%
+            </p>
+            <p className="text-xs text-purple-600 mt-1">Active 30d after sign-up</p>
+          </div>
+        </div>
+      </div>
+
       {/* Level Breakdown & Subscription Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg border p-6">
