@@ -16,6 +16,7 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
   const [buttonUrl, setButtonUrl] = useState<string>('https://maraki-mini-app.vercel.app/');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [result, setResult] = useState<{ success: boolean; text: string } | null>(null);
+  const [progressStats, setProgressStats] = useState<{ sent: number; failed: number; total: number } | null>(null);
   const [deliveryDetails, setDeliveryDetails] = useState<Array<{
     telegramId: number;
     name?: string;
@@ -43,11 +44,36 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
     setMessage((prev) => prev + emoji);
   };
 
+  const pollStatus = (bId: string) => {
+    const interval = setInterval(async () => {
+      try {
+        const res: any = await ApiService.get(`/admin/broadcast/status/${bId}`);
+        if (res?.success) {
+          setProgressStats({ sent: res.sent || 0, failed: res.failed || 0, total: res.total || 0 });
+          setDeliveryDetails(res.details || []);
+
+          if (res.status === 'COMPLETED') {
+            clearInterval(interval);
+            setIsSubmitting(false);
+            setResult({
+              success: true,
+              text: `Broadcast complete! (${res.sent || 0} Delivered / ${res.failed || 0} Failed out of ${res.total || 0})`,
+            });
+          }
+        }
+      } catch (err) {
+        console.error('Failed to poll status:', err);
+      }
+    }, 2000);
+  };
+
   const executeBroadcast = async (specificIds?: number[]) => {
     if (!message.trim()) return;
 
     setIsSubmitting(true);
     setResult(null);
+    setProgressStats(null);
+    setDeliveryDetails([]);
 
     try {
       const res: any = await ApiService.post(API_ENDPOINTS.ADMIN_BROADCAST, {
@@ -59,19 +85,19 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
         specificTelegramIds: specificIds,
       });
 
-      if (res?.success) {
-        const details = res.details || [];
-        setDeliveryDetails(details);
+      if (res?.success && res.broadcastId) {
         setResult({
           success: true,
-          text: `Broadcast completed: ${res.sent || 0} delivered, ${res.failed || 0} failed.`,
+          text: `Broadcast queued for ${res.totalTargeted || 0} users. Dispatching in background...`,
         });
+        setProgressStats({ sent: 0, failed: 0, total: res.totalTargeted || 0 });
+        pollStatus(res.broadcastId);
       } else {
         setResult({ success: false, text: res?.message || 'Failed to dispatch broadcast.' });
+        setIsSubmitting(false);
       }
     } catch (err: any) {
       setResult({ success: false, text: err?.message || 'Broadcast dispatch failed. Please try again.' });
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -93,7 +119,7 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fadeIn">
       <div className="bg-white rounded-3xl shadow-xl border border-slate-200 w-full max-w-4xl max-h-[92vh] overflow-hidden flex flex-col font-sans">
-        {/* Clean Light Header */}
+        {/* Header */}
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-orange-50 text-[#FC4A01]">
@@ -255,6 +281,27 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
               </div>
             </div>
 
+            {/* Live Progress Bar for 10k+ Scale */}
+            {isSubmitting && progressStats && (
+              <div className="p-3.5 bg-orange-50/70 border border-orange-200 rounded-xl space-y-2 animate-fadeIn">
+                <div className="flex items-center justify-between text-xs font-semibold text-[#FC4A01]">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#FC4A01] animate-ping" />
+                    Dispatching Messages...
+                  </span>
+                  <span>
+                    {progressStats.sent + progressStats.failed} / {progressStats.total} ({Math.round(((progressStats.sent + progressStats.failed) / (progressStats.total || 1)) * 100)}%)
+                  </span>
+                </div>
+                <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                  <div
+                    className="bg-[#FC4A01] h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${Math.round(((progressStats.sent + progressStats.failed) / (progressStats.total || 1)) * 100)}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
             {/* Result Alert */}
             {result && (
               <div
@@ -274,13 +321,12 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
               <div className="border border-slate-200 rounded-xl p-3 bg-slate-50 space-y-2">
                 <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
                   <span>
-                    Delivery Status ({deliveryDetails.filter(d => d.status === 'SUCCESS').length} Sent / {deliveryDetails.filter(d => d.status === 'FAILED').length} Failed)
+                    Delivery Report ({deliveryDetails.filter(d => d.status === 'SUCCESS').length} Sent / {deliveryDetails.filter(d => d.status === 'FAILED').length} Failed)
                   </span>
-                  {deliveryDetails.some(d => d.status === 'FAILED') && (
+                  {deliveryDetails.some(d => d.status === 'FAILED') && !isSubmitting && (
                     <button
                       type="button"
                       onClick={handleRetryFailed}
-                      disabled={isSubmitting}
                       className="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm transition-colors flex items-center gap-1"
                     >
                       <RotateCw className="w-3 h-3" />
@@ -289,7 +335,7 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
                   )}
                 </div>
 
-                <div className="max-h-36 overflow-y-auto space-y-1 text-xs">
+                <div className="max-h-36 overflow-y-auto space-y-1 text-xs font-mono">
                   {deliveryDetails.map((item, idx) => (
                     <div
                       key={idx}
@@ -306,11 +352,11 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
                       <div>
                         {item.status === 'SUCCESS' ? (
                           <span className="px-2 py-0.5 text-[10px] font-bold bg-emerald-100 text-emerald-700 rounded-full">
-                            Delivered
+                            Delivered ✅
                           </span>
                         ) : (
                           <span className="px-2 py-0.5 text-[10px] font-bold bg-rose-100 text-rose-700 rounded-full" title={item.error}>
-                            Failed ({item.error || 'Error'})
+                            Failed ❌ ({item.error || 'Blocked'})
                           </span>
                         )}
                       </div>
@@ -338,11 +384,11 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
                 {isSubmitting ? (
                   <>
                     <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Sending...
+                    Processing...
                   </>
                 ) : (
                   <>
-                    <Send className="w-3.5 h-3.5" /> Send Broadcast
+                    <Send className="w-3.5 h-3.5" /> Send Broadcast Now
                   </>
                 )}
               </button>
