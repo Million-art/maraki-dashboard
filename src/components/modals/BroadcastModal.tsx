@@ -13,7 +13,7 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
     `<b>🚀 New Lesson Alert!</b>\n\nHi there! We just published a new interactive practice lesson on <i>Professional English</i>.\n\nPractice now to boost your fluency score today! 💡`
   );
   const [buttonText, setButtonText] = useState<string>('Start Practice 🗣️');
-  const [buttonUrl, setButtonUrl] = useState<string>('https://t.me/maraki_ai_bot/app');
+  const [buttonUrl, setButtonUrl] = useState<string>('https://maraki-mini-app.vercel.app/');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [result, setResult] = useState<{ success: boolean; text: string } | null>(null);
 
