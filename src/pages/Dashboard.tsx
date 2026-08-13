@@ -1,11 +1,12 @@
-import React, { useEffect, useMemo } from 'react';
-import { Users, BookOpen, FileText, Activity, CheckCircle } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Users, BookOpen, FileText, Activity, CheckCircle, Send } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchUsers } from '../store/slices/usersSlice';
 import { fetchQuizzes } from '../store/slices/quizzesSlice';
 import { fetchMaterials } from '../store/slices/materialsSlice';
 import { DashboardSkeleton } from '../components/ui/Skeleton';
 import TelegramAnalytics from '../components/analytics/TelegramAnalytics';
+import BroadcastModal from '../components/modals/BroadcastModal';
 
 const Dashboard: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -13,6 +14,8 @@ const Dashboard: React.FC = () => {
   const { users, isLoading: usersLoading } = useAppSelector((state) => state.users);
   const { quizzes, isLoading: quizzesLoading } = useAppSelector((state) => state.quizzes);
   const { materials, isLoading: materialsLoading } = useAppSelector((state) => state.materials);
+
+  const [isBroadcastModalOpen, setIsBroadcastModalOpen] = useState(false);
 
   useEffect(() => {
     // Fetch data based on user role
@@ -177,11 +180,19 @@ const Dashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Welcome back! Here's what's happening with your platform.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Welcome back! Here's what's happening with your platform.
+          </p>
+        </div>
+        <button
+          onClick={() => setIsBroadcastModalOpen(true)}
+          className="px-5 py-2.5 bg-[#FC4A01] hover:bg-[#e04201] text-white text-xs font-bold rounded-2xl shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
+        >
+          <Send className="w-4 h-4" /> Send Telegram Broadcast
+        </button>
       </div>
 
       {/* Motivational Welcome Card */}
@@ -387,6 +398,12 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Broadcast Modal */}
+      <BroadcastModal
+        isOpen={isBroadcastModalOpen}
+        onClose={() => setIsBroadcastModalOpen(false)}
+      />
     </div>
   );
 };
