@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Send, Eye, MessageSquare, AlertCircle, CheckCircle2, Users, Crown, Zap, Link as LinkIcon, RotateCw } from 'lucide-react';
+import { X, Send, Eye, MessageSquare, AlertCircle, CheckCircle2, Users, Crown, Zap, Link as LinkIcon, RotateCw, ShieldCheck } from 'lucide-react';
 import { ApiService, API_ENDPOINTS } from '../../config/api';
 
 interface BroadcastModalProps {
@@ -8,7 +8,7 @@ interface BroadcastModalProps {
 }
 
 export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose }) => {
-  const [target, setTarget] = useState<'ALL' | 'FREE' | 'PREMIUM'>('ALL');
+  const [target, setTarget] = useState<'ALL' | 'FREE' | 'PREMIUM' | 'ADMIN'>('ALL');
   const [message, setMessage] = useState<string>(
     `<b>🎉 ደስ የሚል ዜና! የነጻ ድምፅ ልምምድ ጊዜያችንን አራዝመናል!</b>\n\nየእናንተን አስተያየት መሠረት በማድረግ፣ ነጻ የእንግሊዝኛ የድምፅ ልምምድ ጊዜያችንን በየክፍለ-ጊዜው ወደ <b>5 ሙሉ ደቂቃዎች</b> አሳድገናል! ⏰\n\n<b>💡 በ5 ደቂቃ ውስጥ ምን ማድረግ ይችላሉ?</b>\n1️⃣ ከ መርአኪ (Maraki AI) ጋር ሙሉ የእንግሊዝኛ የድምፅ ውይይት ማድረግ\n2️⃣ አዳዲስ የቃላት አጠቃቀም እና የሰዋስው ማሻሻያዎችን ማግኘት\n3️⃣ የእንግሊዝኛ አነባበብዎን እና የመናገር ልበ-ሙሉነትዎን ማሳደግ\n\nየተራዘመውን ነጻ ልምምድዎን ዛሬውኑ ይጀምሩ 👇👇👇`
   );
@@ -151,11 +151,11 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Target Audience
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <button
                   type="button"
                   onClick={() => setTarget('ALL')}
-                  className={`py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                  className={`py-2 px-2.5 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
                     target === 'ALL'
                       ? 'border-[#FC4A01] bg-orange-50 text-[#FC4A01]'
                       : 'border-slate-200 text-slate-600 hover:bg-slate-50'
@@ -166,7 +166,7 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
                 <button
                   type="button"
                   onClick={() => setTarget('FREE')}
-                  className={`py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                  className={`py-2 px-2.5 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
                     target === 'FREE'
                       ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
                       : 'border-slate-200 text-slate-600 hover:bg-slate-50'
@@ -177,13 +177,24 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
                 <button
                   type="button"
                   onClick={() => setTarget('PREMIUM')}
-                  className={`py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                  className={`py-2 px-2.5 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
                     target === 'PREMIUM'
                       ? 'border-amber-500 bg-amber-50 text-amber-700'
                       : 'border-slate-200 text-slate-600 hover:bg-slate-50'
                   }`}
                 >
                   <Crown className="w-3.5 h-3.5 text-amber-500" /> Premium Tier
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTarget('ADMIN')}
+                  className={`py-2 px-2.5 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                    target === 'ADMIN'
+                      ? 'border-purple-500 bg-purple-50 text-purple-700'
+                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-purple-500" /> Admin / Test Only
                 </button>
               </div>
             </div>
