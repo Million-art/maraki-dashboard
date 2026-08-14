@@ -14,6 +14,7 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
   );
   const [buttonText, setButtonText] = useState<string>('🎙️ አሁኑኑ በድምፅ ይለማመዱ 🚀');
   const [buttonUrl, setButtonUrl] = useState<string>('https://maraki-mini-app.vercel.app/');
+  const [stickerFileId, setStickerFileId] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [result, setResult] = useState<{ success: boolean; text: string } | null>(null);
   const [progressStats, setProgressStats] = useState<{ sent: number; failed: number; total: number } | null>(null);
@@ -106,6 +107,7 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
         parseMode: 'HTML',
         buttonText: buttonText.trim() || undefined,
         buttonUrl: buttonUrl.trim() || undefined,
+        stickerFileId: stickerFileId.trim() || undefined,
         specificTelegramIds: specificIds,
       });
 
@@ -294,6 +296,32 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
               </div>
             </div>
 
+            {/* Telegram Sticker / GIF Settings */}
+            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold text-slate-700 block">
+                  Telegram Mascot Sticker / GIF File ID (Optional)
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setStickerFileId('CAACAgEAAxkBAAEtjgdqfzGCpDzw_VIipgR1d-udtV-avwACegQAAjXMGUeIIBYgvM8hnz0E')}
+                  className="text-[11px] font-bold text-[#FC4A01] hover:underline flex items-center gap-1"
+                >
+                  😭 Insert Chatty Mascot GIF
+                </button>
+              </div>
+              <input
+                type="text"
+                value={stickerFileId}
+                onChange={(e) => setStickerFileId(e.target.value)}
+                placeholder="e.g. CAACAgEAAxkBAAEtjgdqfzGCpDzw_VIipgR1d..."
+                className="w-full px-3 py-1.5 text-xs font-mono bg-white border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-[#FC4A01]"
+              />
+              <p className="text-[10px] text-slate-400">
+                Forward any sticker or GIF to @ShowJsonBot on Telegram to copy its <code>file_id</code>.
+              </p>
+            </div>
+
             {/* Button Settings */}
             <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
               <label className="text-xs font-semibold text-slate-700 block">
@@ -438,6 +466,14 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
 
             {/* Telegram Simulated Chat Box (Light Mode Telegram Style) */}
             <div className="w-full max-w-xs bg-[#EFEFF4] rounded-2xl p-3 shadow-inner border border-slate-300 space-y-2">
+              {/* Optional Sticker Animated Preview */}
+              {stickerFileId && (
+                <div className="flex items-center justify-center p-2 bg-white/70 rounded-xl border border-slate-200 shadow-sm animate-pulse">
+                  <span className="text-2xl">😭</span>
+                  <span className="text-[10px] font-bold text-slate-500 ml-1 font-mono">Animated Sticker Attached</span>
+                </div>
+              )}
+
               {/* Chat Bubble */}
               <div className="bg-white rounded-xl p-3 text-xs text-slate-900 space-y-2 shadow-sm border border-slate-200/80">
                 <div
