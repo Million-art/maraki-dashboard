@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Users, BookOpen, FileText, Activity, CheckCircle, Send, Trophy } from 'lucide-react';
+import { Users, BookOpen, Activity, CheckCircle, Send, Trophy } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchUsers } from '../store/slices/usersSlice';
 import { fetchQuizzes } from '../store/slices/quizzesSlice';
