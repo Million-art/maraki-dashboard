@@ -25,7 +25,7 @@ const LEVEL_COLORS: Record<string, string> = {
 const TIER_LABEL: Record<string, string> = {
   FREE: 'Free',
   MONTHLY: '1 Month',
-  DAILY: '3 Months',
+  DAILY: 'Weekly / Quarterly',
   YEARLY: '1 Year',
 };
 
@@ -147,6 +147,7 @@ const StudentDrawer: React.FC<DrawerProps> = ({ student, onClose, onUpdateTier, 
             <div className="grid grid-cols-2 gap-2 mb-3">
               {[
                 { id: 'free', label: 'Free' },
+                { id: 'weekly', label: '1 Week' },
                 { id: 'monthly', label: '1 Month' },
                 { id: 'daily', label: '3 Months' },
                 { id: 'yearly', label: '1 Year' },
@@ -327,7 +328,7 @@ const Students: React.FC = () => {
             {[
               { label: 'Free', value: analytics.subscriptionBreakdown.free, color: 'bg-gray-400' },
               { label: '1 Month', value: analytics.subscriptionBreakdown.monthly, color: 'bg-purple-500' },
-              { label: '3 Months', value: analytics.subscriptionBreakdown.daily, color: 'bg-blue-500' },
+              { label: 'Weekly / Qtrly', value: analytics.subscriptionBreakdown.daily, color: 'bg-blue-500' },
               { label: '1 Year', value: analytics.subscriptionBreakdown.yearly, color: 'bg-amber-500' },
             ].map(({ label, value, color }) => {
               const pct = analytics.totalUsers > 0 ? Math.round((value / analytics.totalUsers) * 100) : 0;
@@ -386,7 +387,7 @@ const Students: React.FC = () => {
             <option value="">All Subscriptions</option>
             <option value="free">Free Tier</option>
             <option value="monthly">1 Month</option>
-            <option value="daily">3 Months</option>
+            <option value="daily">Weekly / Quarterly</option>
             <option value="yearly">1 Year</option>
           </select>
         </div>
