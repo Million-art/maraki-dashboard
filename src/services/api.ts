@@ -139,3 +139,68 @@ export const studentsApi = {
     ApiService.patch<StudentUser>(API_ENDPOINTS.ADMIN_STUDENT_UPDATE_SUBSCRIPTION(telegramId), { tier, daysToAdd }),
 };
 
+// Daily Challenges API
+export interface DailyChallenge {
+  id: string;
+  level: string;
+  dayNumber: number;
+  word: string;
+  wordPartOfSpeech: string;
+  wordDefinition: string;
+  wordExample: string;
+  idiom: string;
+  idiomMeaning: string;
+  idiomExample: string;
+  createdAt: string;
+}
+
+export interface ChallengesResponse {
+  data: DailyChallenge[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface ChallengeStats {
+  total: number;
+  beginner: number;
+  intermediate: number;
+  advanced: number;
+}
+
+export interface CreateChallengeDto {
+  level: string;
+  dayNumber: number;
+  word: string;
+  wordPartOfSpeech: string;
+  wordDefinition: string;
+  wordExample: string;
+  idiom: string;
+  idiomMeaning: string;
+  idiomExample: string;
+}
+
+export interface UpdateChallengeDto extends Partial<CreateChallengeDto> {}
+
+export const challengesApi = {
+  getAll: (params?: { page?: number; limit?: number; level?: string; search?: string }) => {
+    const query = new URLSearchParams();
+    if (params?.page) query.set('page', String(params.page));
+    if (params?.limit) query.set('limit', String(params.limit));
+    if (params?.level) query.set('level', params.level);
+    if (params?.search) query.set('search', params.search);
+    return ApiService.get<ChallengesResponse>(`${API_ENDPOINTS.CHALLENGES}?${query.toString()}`);
+  },
+  getStats: () => ApiService.get<ChallengeStats>(API_ENDPOINTS.CHALLENGE_STATS),
+  getToday: (level?: string) => {
+    const query = level ? `?level=${level}` : '';
+    return ApiService.get<{ data: DailyChallenge | null }>(`${API_ENDPOINTS.CHALLENGE_TODAY}${query}`);
+  },
+  getById: (id: string) => ApiService.get<DailyChallenge>(API_ENDPOINTS.CHALLENGE_BY_ID(id)),
+  create: (data: CreateChallengeDto) => ApiService.post<DailyChallenge>(API_ENDPOINTS.CHALLENGES, data),
+  update: (id: string, data: UpdateChallengeDto) => ApiService.put<DailyChallenge>(API_ENDPOINTS.CHALLENGE_BY_ID(id), data),
+  delete: (id: string) => ApiService.delete<{ success: boolean; message: string }>(API_ENDPOINTS.CHALLENGE_BY_ID(id)),
+};
+
+

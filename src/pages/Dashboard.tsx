@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Users, BookOpen, FileText, Activity, CheckCircle, Send } from 'lucide-react';
+import { Users, BookOpen, FileText, Activity, CheckCircle, Send, Trophy } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchUsers } from '../store/slices/usersSlice';
 import { fetchQuizzes } from '../store/slices/quizzesSlice';
@@ -7,6 +7,7 @@ import { fetchMaterials } from '../store/slices/materialsSlice';
 import { DashboardSkeleton } from '../components/ui/Skeleton';
 import TelegramAnalytics from '../components/analytics/TelegramAnalytics';
 import BroadcastModal from '../components/modals/BroadcastModal';
+import { challengesApi, type ChallengeStats } from '../services/api';
 
 const Dashboard: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -16,6 +17,7 @@ const Dashboard: React.FC = () => {
   const { materials, isLoading: materialsLoading } = useAppSelector((state) => state.materials);
 
   const [isBroadcastModalOpen, setIsBroadcastModalOpen] = useState(false);
+  const [challengeStats, setChallengeStats] = useState<ChallengeStats | null>(null);
 
   useEffect(() => {
     // Fetch data based on user role
@@ -24,7 +26,12 @@ const Dashboard: React.FC = () => {
     }
     dispatch(fetchQuizzes());
     dispatch(fetchMaterials());
-  }, [dispatch]);
+    
+    // Fetch Daily Challenge Stats
+    challengesApi.getStats()
+      .then((data) => setChallengeStats(data))
+      .catch((err) => console.error('Failed to fetch challenge stats for dashboard:', err));
+  }, [dispatch, user]);
 
   // Calculate real statistics with useMemo for performance
   const statistics = useMemo(() => {
@@ -84,13 +91,13 @@ const Dashboard: React.FC = () => {
       roles: ['admin', 'moderator', 'superadmin'],
     },
     {
-      name: 'Total Materials',
-      value: statistics.totalMaterials,
-      icon: FileText,
-      color: 'bg-purple-500',
-      change: `+${recentMaterials} this week`,
+      name: 'Daily Challenges',
+      value: challengeStats?.total ?? 270,
+      icon: Trophy,
+      color: 'bg-amber-500',
+      change: '90 days × 3 levels',
       changeType: 'positive',
-      loading: materialsLoading,
+      loading: false,
       roles: ['admin', 'moderator', 'superadmin'],
     },
     {
