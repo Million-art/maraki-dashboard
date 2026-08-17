@@ -15,6 +15,7 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
   const [buttonText, setButtonText] = useState<string>('🎙️ አሁኑኑ በድምፅ ይለማመዱ 🚀');
   const [buttonUrl, setButtonUrl] = useState<string>('https://maraki-mini-app.vercel.app/');
   const [stickerFileId, setStickerFileId] = useState<string>('');
+  const [videoFileId, setVideoFileId] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [result, setResult] = useState<{ success: boolean; text: string } | null>(null);
   const [progressStats, setProgressStats] = useState<{ sent: number; failed: number; total: number } | null>(null);
@@ -108,6 +109,7 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
         buttonText: buttonText.trim() || undefined,
         buttonUrl: buttonUrl.trim() || undefined,
         stickerFileId: stickerFileId.trim() || undefined,
+        videoFileId: videoFileId.trim() || undefined,
         specificTelegramIds: specificIds,
       });
 
@@ -296,29 +298,54 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
               </div>
             </div>
 
-            {/* Telegram Sticker / GIF Settings */}
-            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold text-slate-700 block">
-                  Telegram Mascot Sticker / GIF File ID (Optional)
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setStickerFileId('CAACAgEAAxkBAAEtjgdqfzGCpDzw_VIipgR1d-udtV-avwACegQAAjXMGUeIIBYgvM8hnz0E')}
-                  className="text-[11px] font-bold text-[#FC4A01] hover:underline flex items-center gap-1"
-                >
-                  😭 Insert Chatty Mascot GIF
-                </button>
+            {/* Telegram Video / Sticker / GIF Settings */}
+            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs font-semibold text-slate-700 block">
+                    Telegram Video File ID (Optional)
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setVideoFileId('BAACAgQAAxkBAAEtrf5qgtLP6TognEeQUvdpLwUY0tYnSgACQCUAAt_AGFCM3z6E69nkIz0E')}
+                    className="text-[11px] font-bold text-[#FC4A01] hover:underline flex items-center gap-1"
+                  >
+                    🎬 Insert Promo Video File ID
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  value={videoFileId}
+                  onChange={(e) => setVideoFileId(e.target.value)}
+                  placeholder="e.g. BAACAgQAAxkBAAEtrf5qgtLP6TognEe..."
+                  className="w-full px-3 py-1.5 text-xs font-mono bg-white border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-[#FC4A01]"
+                />
               </div>
-              <input
-                type="text"
-                value={stickerFileId}
-                onChange={(e) => setStickerFileId(e.target.value)}
-                placeholder="e.g. CAACAgEAAxkBAAEtjgdqfzGCpDzw_VIipgR1d..."
-                className="w-full px-3 py-1.5 text-xs font-mono bg-white border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-[#FC4A01]"
-              />
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs font-semibold text-slate-700 block">
+                    Telegram Mascot Sticker / GIF File ID (Optional)
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setStickerFileId('CAACAgEAAxkBAAEtjgdqfzGCpDzw_VIipgR1d-udtV-avwACegQAAjXMGUeIIBYgvM8hnz0E')}
+                    className="text-[11px] font-bold text-[#FC4A01] hover:underline flex items-center gap-1"
+                  >
+                    😭 Insert Chatty Mascot GIF
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  value={stickerFileId}
+                  onChange={(e) => setStickerFileId(e.target.value)}
+                  placeholder="e.g. CAACAgEAAxkBAAEtjgdqfzGCpDzw_VIipgR1d..."
+                  className="w-full px-3 py-1.5 text-xs font-mono bg-white border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-[#FC4A01]"
+                />
+              </div>
+
               <p className="text-[10px] text-slate-400">
-                Forward any sticker or GIF to @ShowJsonBot on Telegram to copy its <code>file_id</code>.
+                Forward any sticker, GIF, or video to @ShowJsonBot on Telegram to copy its <code>file_id</code>.
               </p>
             </div>
 
