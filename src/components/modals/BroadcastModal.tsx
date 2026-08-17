@@ -336,10 +336,10 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
                   className="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-[#FC4A01]"
                 />
                 <input
-                  type="url"
+                  type="text"
                   value={buttonUrl}
                   onChange={(e) => setButtonUrl(e.target.value)}
-                  placeholder="Button URL (e.g. https://...)"
+                  placeholder="Button URL or Command (e.g. https://... or /quiz)"
                   className="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-[#FC4A01]"
                 />
               </div>
