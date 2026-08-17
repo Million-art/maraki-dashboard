@@ -242,18 +242,18 @@ const Students: React.FC = () => {
       sub: `${analytics?.subscriptionBreakdown.monthly ?? 0} monthly · ${analytics?.subscriptionBreakdown.yearly ?? 0} yearly`,
     },
     {
+      label: 'Total Referrals',
+      value: (analytics as any)?.referrals?.totalReferredUsers ?? 0,
+      icon: TrendingUp,
+      color: 'from-purple-500 to-purple-600',
+      sub: `${(analytics as any)?.referrals?.referralConversionRate ?? 0}% viral join rate`,
+    },
+    {
       label: 'Quizzes Completed',
       value: analytics?.engagement.totalQuizzesCompleted ?? 0,
       icon: BookOpen,
       color: 'from-emerald-500 to-emerald-600',
       sub: 'All time',
-    },
-    {
-      label: 'New This Month',
-      value: analytics?.monthlyNewUsers ?? 0,
-      icon: TrendingUp,
-      color: 'from-purple-500 to-purple-600',
-      sub: 'Last 30 days',
     },
   ];
 

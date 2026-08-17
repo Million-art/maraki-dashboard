@@ -222,6 +222,17 @@ export interface TelegramUserAnalytics {
     totalMaterialsAccessed: number;
     totalTimeSpent: number;
   };
+  referrals?: {
+    totalReferredUsers: number;
+    referralConversionRate: number;
+    topReferrers: Array<{
+      telegramId: string;
+      name: string;
+      username: string | null;
+      isPremium: boolean;
+      totalReferred: number;
+    }>;
+  };
 }
 
 export interface TelegramUserSummary {
