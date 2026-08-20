@@ -16,6 +16,7 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
   const [buttonUrl, setButtonUrl] = useState<string>('https://maraki-mini-app.vercel.app/');
   const [stickerFileId, setStickerFileId] = useState<string>('');
   const [videoFileId, setVideoFileId] = useState<string>('');
+  const [imageUrl, setImageUrl] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [result, setResult] = useState<{ success: boolean; text: string } | null>(null);
   const [progressStats, setProgressStats] = useState<{ sent: number; failed: number; total: number } | null>(null);
@@ -108,6 +109,7 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
         parseMode: 'HTML',
         buttonText: buttonText.trim() || undefined,
         buttonUrl: buttonUrl.trim() || undefined,
+        imageUrl: imageUrl.trim() || undefined,
         stickerFileId: stickerFileId.trim() || undefined,
         videoFileId: videoFileId.trim() || undefined,
         specificTelegramIds: specificIds,
@@ -298,8 +300,21 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
               </div>
             </div>
 
-            {/* Telegram Video / Sticker / GIF Settings */}
+            {/* Telegram Image / Video / Sticker / GIF Settings */}
             <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+              <div>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">
+                  🖼️ Broadcast Image URL or Photo File ID (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="e.g. https://domain.com/promo.jpg or AgACAg..."
+                  className="w-full px-3 py-1.5 text-xs font-mono bg-white border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-[#FC4A01]"
+                />
+              </div>
+
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="text-xs font-semibold text-slate-700 block">
@@ -493,6 +508,20 @@ export const BroadcastModal: React.FC<BroadcastModalProps> = ({ isOpen, onClose 
 
             {/* Telegram Simulated Chat Box (Light Mode Telegram Style) */}
             <div className="w-full max-w-xs bg-[#EFEFF4] rounded-2xl p-3 shadow-inner border border-slate-300 space-y-2">
+              {/* Image Preview */}
+              {imageUrl && (
+                <div className="rounded-xl overflow-hidden border border-slate-200 shadow-sm max-h-48 bg-slate-200 flex items-center justify-center">
+                  <img
+                    src={imageUrl}
+                    alt="Broadcast Photo Preview"
+                    className="w-full h-auto object-cover max-h-48 rounded-xl"
+                    onError={(e) => {
+                      (e.target as HTMLElement).style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+
               {/* Optional Sticker Animated Preview */}
               {stickerFileId && (
                 <div className="flex items-center justify-center p-2 bg-white/70 rounded-xl border border-slate-200 shadow-sm animate-pulse">
