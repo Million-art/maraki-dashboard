@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Send, AlertTriangle, FlaskConical } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { useAppSelector } from '../../store';
+import { surveyApi } from '../../services/api';
 
 interface SurveyBroadcastModalProps {
   isOpen: boolean;
@@ -15,11 +15,8 @@ const SurveyBroadcastModal: React.FC<SurveyBroadcastModalProps> = ({ isOpen, onC
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [testTelegramId, setTestTelegramId] = useState('');
-  const { token } = useAppSelector((state) => state.auth);
 
   if (!isOpen) return null;
-
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
   const handleTest = async () => {
     if (!testTelegramId.trim()) {
@@ -30,19 +27,10 @@ const SurveyBroadcastModal: React.FC<SurveyBroadcastModalProps> = ({ isOpen, onC
     setError(null);
     setSuccess(null);
     try {
-      const response = await fetch(`${API_URL}/survey/admin/test-broadcast`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ telegramId: testTelegramId.trim() }),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || 'Test failed');
+      await surveyApi.sendTestBroadcast(testTelegramId.trim());
       setSuccess(`✅ Test sent to Telegram ID ${testTelegramId}! Check your Telegram.`);
     } catch (err: any) {
-      setError(err.message || 'Failed to send test');
+      setError(err.response?.data?.message || err.message || 'Failed to send test');
     } finally {
       setIsTesting(false);
     }
@@ -53,15 +41,7 @@ const SurveyBroadcastModal: React.FC<SurveyBroadcastModalProps> = ({ isOpen, onC
     setError(null);
     setSuccess(null);
     try {
-      const response = await fetch(`${API_URL}/survey/admin/broadcast`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || 'Failed to send broadcast');
+      const data = await surveyApi.sendBroadcast();
       setSuccess(`🚀 Survey broadcast queued for ${data.targetCount || 'eligible'} users!`);
       if (onSuccess) onSuccess();
       setTimeout(() => {
@@ -69,7 +49,7 @@ const SurveyBroadcastModal: React.FC<SurveyBroadcastModalProps> = ({ isOpen, onC
         setSuccess(null);
       }, 3000);
     } catch (err: any) {
-      setError(err.message || 'An error occurred while sending the broadcast');
+      setError(err.response?.data?.message || err.message || 'An error occurred while sending the broadcast');
     } finally {
       setIsSending(false);
     }

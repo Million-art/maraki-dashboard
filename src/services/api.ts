@@ -203,4 +203,11 @@ export const challengesApi = {
   delete: (id: string) => ApiService.delete<{ success: boolean; message: string }>(API_ENDPOINTS.CHALLENGE_BY_ID(id)),
 };
 
+// Survey Admin API
+export const surveyApi = {
+  getResults: () => ApiService.get<{ totalResponses: number; primaryChartData: any[]; followUpChartData: any[] }>(API_ENDPOINTS.SURVEY_ADMIN_RESULTS),
+  sendBroadcast: () => ApiService.post<{ success: boolean; message: string; targetCount?: number }>(API_ENDPOINTS.SURVEY_ADMIN_BROADCAST),
+  sendTestBroadcast: (telegramId: string) => ApiService.post<{ success: boolean; message: string }>(API_ENDPOINTS.SURVEY_ADMIN_TEST_BROADCAST, { telegramId }),
+};
+
 

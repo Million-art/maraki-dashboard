@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { MessageSquare, RefreshCw } from 'lucide-react';
-import { useAppSelector } from '../store';
 import SurveyBroadcastModal from '../components/modals/SurveyBroadcastModal';
 import SurveyResultsChart from '../components/analytics/SurveyResultsChart';
+import { surveyApi } from '../services/api';
 
 const Surveys: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -12,20 +12,11 @@ const Surveys: React.FC = () => {
     primaryChartData: [],
     followUpChartData: []
   });
-  const { token } = useAppSelector((state) => state.auth);
 
   const fetchSurveyResults = async () => {
     setIsLoading(true);
     try {
-
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      const response = await fetch(`${API_URL}/survey/admin/results`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (!response.ok) throw new Error('Failed to fetch survey results');
-      const data = await response.json();
+      const data = await surveyApi.getResults();
       setSurveyData(data);
     } catch (error) {
       console.error('Error fetching survey data:', error);

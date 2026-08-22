@@ -1,7 +1,7 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios';
 
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
@@ -114,6 +114,11 @@ export const API_ENDPOINTS = {
   CHALLENGE_STATS: '/api/challenges/stats',
   CHALLENGE_TODAY: '/api/challenges/today',
   CHALLENGE_BY_ID: (id: string) => `/api/challenges/${id}`,
+
+  // Survey (admin)
+  SURVEY_ADMIN_RESULTS: '/survey/admin/results',
+  SURVEY_ADMIN_BROADCAST: '/survey/admin/broadcast',
+  SURVEY_ADMIN_TEST_BROADCAST: '/survey/admin/test-broadcast',
 } as const;
 
 // Generic API methods
