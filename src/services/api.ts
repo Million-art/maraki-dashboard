@@ -204,10 +204,15 @@ export const challengesApi = {
 };
 
 // Survey Admin API
+export interface ChartData {
+  name: string;
+  value: number;
+}
+
 export interface SurveyResultsData {
   totalResponses: number;
-  primaryChartData: Array<{ option: string; count: number; percentage: number }>;
-  followUpChartData: Array<{ option: string; count: number; percentage: number }>;
+  primaryChartData: ChartData[];
+  followUpChartData: ChartData[];
 }
 
 export const surveyApi = {
