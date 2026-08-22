@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { MessageSquare, RefreshCw } from 'lucide-react';
 import SurveyBroadcastModal from '../components/modals/SurveyBroadcastModal';
 import SurveyResultsChart from '../components/analytics/SurveyResultsChart';
-import { surveyApi } from '../services/api';
+import { surveyApi, type SurveyResultsData } from '../services/api';
 
 const Surveys: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [surveyData, setSurveyData] = useState({
+  const [surveyData, setSurveyData] = useState<SurveyResultsData>({
     totalResponses: 0,
     primaryChartData: [],
     followUpChartData: []

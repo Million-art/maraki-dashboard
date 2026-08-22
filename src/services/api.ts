@@ -204,8 +204,14 @@ export const challengesApi = {
 };
 
 // Survey Admin API
+export interface SurveyResultsData {
+  totalResponses: number;
+  primaryChartData: Array<{ option: string; count: number; percentage: number }>;
+  followUpChartData: Array<{ option: string; count: number; percentage: number }>;
+}
+
 export const surveyApi = {
-  getResults: () => ApiService.get<{ totalResponses: number; primaryChartData: any[]; followUpChartData: any[] }>(API_ENDPOINTS.SURVEY_ADMIN_RESULTS),
+  getResults: () => ApiService.get<SurveyResultsData>(API_ENDPOINTS.SURVEY_ADMIN_RESULTS),
   sendBroadcast: () => ApiService.post<{ success: boolean; message: string; targetCount?: number }>(API_ENDPOINTS.SURVEY_ADMIN_BROADCAST),
   sendTestBroadcast: (telegramId: string) => ApiService.post<{ success: boolean; message: string }>(API_ENDPOINTS.SURVEY_ADMIN_TEST_BROADCAST, { telegramId }),
 };
