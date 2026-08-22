@@ -18,6 +18,7 @@ import Notification from './components/ui/Notification';
 import ErrorBoundary from './components/ErrorBoundary';
 import Students from './pages/Students';
 import Challenges from './pages/Challenges';
+import Surveys from './pages/Surveys';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
                 <Route path="quizzes" element={<ErrorBoundary><ProtectedRoute><Quizzes /></ProtectedRoute></ErrorBoundary>} />
                 <Route path="materials" element={<ErrorBoundary><ProtectedRoute><Materials /></ProtectedRoute></ErrorBoundary>} />
                 <Route path="challenges" element={<ErrorBoundary><ProtectedRoute><Challenges /></ProtectedRoute></ErrorBoundary>} />
+                <Route path="surveys" element={<ErrorBoundary><ProtectedRoute><Surveys /></ProtectedRoute></ErrorBoundary>} />
                 <Route path="settings" element={<ErrorBoundary><ProtectedRoute><Settings /></ProtectedRoute></ErrorBoundary>} />
               </Route>
             </Routes>

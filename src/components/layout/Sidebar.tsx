@@ -7,7 +7,8 @@ import {
   BarChart3, 
   Settings, 
   X,
-  Trophy
+  Trophy,
+  MessageSquare
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useAppSelector, useAppDispatch } from '../../store';
@@ -20,6 +21,7 @@ const navigation = [
   { name: 'Quizzes', href: '/quizzes', icon: BookOpen, roles: ['admin', 'moderator', 'superadmin'] },
   { name: 'Materials', href: '/materials', icon: FileText, roles: ['admin', 'moderator', 'superadmin'] },
   { name: 'Daily Challenges', href: '/challenges', icon: Trophy, roles: ['admin', 'moderator', 'superadmin'] },
+  { name: 'Surveys', href: '/surveys', icon: MessageSquare, roles: ['admin', 'moderator', 'superadmin'] },
   { name: 'Settings', href: '/settings', icon: Settings, roles: ['admin', 'moderator', 'superadmin'] },
 ];
 
